@@ -115,14 +115,14 @@ class PointTest {
 	void testEqualsForNotEqualPointsXNaN() {
 		Point p1 = new Point(Double.NaN, 0);
 		Point p2 = new Point(0, 0);
-		assertEquals(p1, p2);
+		assertNotEquals(p1, p2);
 	}
 	
 	@Test
 	void testEqualsForNotEqualPointsYNaN() {
 		Point p1 = new Point(0, 0);
 		Point p2 = new Point(0, Double.NaN);
-		assertEquals(p1, p2);
+		assertNotEquals(p1, p2);
 	}
 	
 	@Test
