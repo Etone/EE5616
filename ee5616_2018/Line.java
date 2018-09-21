@@ -19,9 +19,11 @@ public class Line {
 	}
 	
 	public void add(Point point) {
-		this.points.add(point);
-		this.intercept = Double.NaN;
-		this.slope = Double.NaN;
+		if (point != null) {
+			this.points.add(point);
+			this.intercept = Double.NaN;
+			this.slope = Double.NaN;			
+		}
 	}
 	
 	public int length() {
