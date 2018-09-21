@@ -184,40 +184,40 @@ class PointTest {
 	void testRotateZero() throws AngleOutOfRangeException {
 		Point p = new Point(1, 0);
 		p.rotate(0);
-		assertEquals(1, p.getX());
-		assertEquals(0, p.getY());
+		assertEquals(1, p.getX(), ACCURACY);
+		assertEquals(0, p.getY(), ACCURACY);
 	}
 	
 	@Test
 	void testRotatePlus90() throws AngleOutOfRangeException {
 		Point p = new Point(1, 0);
 		p.rotate(90);
-		assertEquals(0, p.getX());
-		assertEquals(-1, p.getY());
+		assertEquals(0, p.getX(), ACCURACY);
+		assertEquals(-1, p.getY(), ACCURACY);
 	}
 	
 	@Test
 	void testRotatePlus180() throws AngleOutOfRangeException {
 		Point p = new Point(1, 0);
 		p.rotate(180);
-		assertEquals(-1, p.getX());
-		assertEquals(0, p.getY());
+		assertEquals(-1, p.getX(), ACCURACY);
+		assertEquals(0, p.getY(), ACCURACY);
 	}
 	
 	@Test
 	void testRotateNeg90() throws AngleOutOfRangeException {
 		Point p = new Point(1, 0);
 		p.rotate(-90);
-		assertEquals(0, p.getX());
-		assertEquals(1, p.getY());
+		assertEquals(0, p.getX(), ACCURACY);
+		assertEquals(1, p.getY(), ACCURACY);
 	}
 	
 	@Test
 	void testRotateNeg180() throws AngleOutOfRangeException {
 		Point p = new Point(1, 0);
 		p.rotate(-180);
-		assertEquals(-1, p.getX());
-		assertEquals(0, p.getY());
+		assertEquals(-1, p.getX(), ACCURACY);
+		assertEquals(0, p.getY(), ACCURACY);
 	}
 	
 	@Test
