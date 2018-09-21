@@ -1,7 +1,6 @@
 package ee5616_2018;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Line {
@@ -15,7 +14,9 @@ public class Line {
 	}
 	
 	public Line(Point[] points) {
-		this.points.addAll(Arrays.asList(points));
+		for (Point p : points) {
+			this.add(p);
+		}
 	}
 	
 	public void add(Point point) {
