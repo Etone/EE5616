@@ -243,24 +243,12 @@ class PointTest {
 	
 	@Test
 	void testRotatePos180Fail() {
-		try {
-			//new Point(0, 0).rotate(180 + Double.MIN_VALUE);
-			new Point(0, 0).rotate(180 + ACCURACY);
-			fail("Missing exception");
-		} catch (AngleOutOfRangeException e) {
-			
-		}
+		assertThrows(AngleOutOfRangeException.class, () -> new Point(0, 0).rotate(180 + ACCURACY));
 	}
 	
 	@Test
 	void testRotateNeg180Fail() {
-		try {
-			//new Point(0, 0).rotate(-180 - Double.MIN_VALUE);
-			new Point(0, 0).rotate(-180 - ACCURACY);
-			fail("Missing exception");
-		} catch (AngleOutOfRangeException e) {
-			
-		}
+		assertThrows(AngleOutOfRangeException.class, () -> new Point(0, 0).rotate(-180 - ACCURACY));
 	}
 	
 	@Test
