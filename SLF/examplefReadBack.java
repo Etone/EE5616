@@ -79,12 +79,17 @@ public class examplefReadBack {
 	    int valid = 0;
 	    int validLength = 0;
 	    int invalidLength = 0;
+	    int allLength = 0;
+	    double slope = 0;
+	    double intercept = 0;
 	    for (Line line : lines) {
 	    	if (line.isValid()) {
 	    		try {
-		    		System.out.println("  - line length="+line.length()+" slope="+line.slope()+", intersect="+line.intercept());
+		    		// System.out.println("  - line length="+line.length()+" slope="+line.slope()+", intersect="+line.intercept());
 		    		valid += 1;
 		    		validLength += line.length();
+		    		slope += line.slope();
+		    		intercept += line.intercept();
 	    		} catch (Throwable t) {
 	    			System.err.println("Unexpected invalid line");
 	    			t.printStackTrace();
@@ -92,11 +97,45 @@ public class examplefReadBack {
 	    	} else {
 	    		invalidLength += line.length();
 	    	}
+	    	allLength += line.length();
 	    }
 	    
 	    System.out.println("Valid lines: "+valid);
 	    System.out.println("Invalid lines: "+(lines.size() - valid));
 	    System.out.println("Average valid line length: "+((double)validLength / (double)valid));
 	    System.out.println("Average invalid line length: "+((double)invalidLength / (double)(lines.size() - valid)));
+	    System.out.println("Average line length: "+((double)allLength / (double)lines.size()));
+	    System.out.println();
+	    
+	    slope = (slope/(double)valid);
+	    intercept = (intercept/(double)valid);
+	    
+	    System.out.println("Average slope="+slope+" intercept="+intercept);
+	    
+	    double slopeVarianz2 = 0;
+	    double interceptVarianz2 = 0;
+	    
+	    for (Line line : lines) {
+	    	if (line.isValid()) {
+	    		try {
+		    		double deltaSlope = (line.slope() - slope);
+		    		slopeVarianz2 += (deltaSlope * deltaSlope);
+		    		
+		    		double deltaIntercept = (line.intercept() - intercept);
+		    		interceptVarianz2 += (deltaIntercept * deltaIntercept);
+		    		
+	    		} catch (Throwable t) {
+	    			System.err.println("Unexpected invalid line");
+	    			t.printStackTrace();
+	    		}
+	    	}
+	    }
+	    
+	    slopeVarianz2 = slopeVarianz2 / (double)(valid-1);
+	    interceptVarianz2 = interceptVarianz2 / (double)(valid-1);
+	    
+	    System.out.println("Standardabweichung: slope="+Math.sqrt(slopeVarianz2)+", intercept="+Math.sqrt(interceptVarianz2));
+	    
+	    
 	}
 }
