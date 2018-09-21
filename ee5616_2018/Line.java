@@ -129,7 +129,7 @@ public class Line {
 			
 			double intercept = y - (a * x);
 			
-			if (!Double.isFinite(slope)) {
+			if (!Double.isFinite(intercept)) {
 				throw new RegressionFailedException();
 			}
 			
