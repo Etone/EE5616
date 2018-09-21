@@ -139,19 +139,14 @@ class PointTest {
 	
 	@Test
 	void testToStringZero() {
-		assertEquals("( +0.0000E+00, +0.0000E+00 )", new Point());
-	}
-	
-	@Test
-	void testToStringNaN() {
-		assertEquals("( +0.0000E+00, +0.0000E+00 )", new Point(Double.NaN, Double.NaN));
+		assertEquals("( +0.0000E+00, +0.0000E+00 )", new Point().toString());
 	}
 	
 	@Test
 	void testToStringNeg() {
 		assertEquals(
 				"( -1.0000E+03, +2.0000E+05 )",
-				new Point(-1000, 200000)
+				new Point(-1000, 200000).toString()
 		);
 	}
 	
