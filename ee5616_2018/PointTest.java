@@ -176,8 +176,8 @@ class PointTest {
 	void testRotateZeroOrigin() throws AngleOutOfRangeException {
 		Point p = new Point(0, 0);
 		p.rotate(0);
-		assertEquals(0, p.getX());
-		assertEquals(0, p.getY());
+		assertEquals(0, p.getX(), ACCURACY);
+		assertEquals(0, p.getY(), ACCURACY);
 	}
 	
 	@Test
