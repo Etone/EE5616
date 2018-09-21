@@ -8,6 +8,8 @@ import ee5616_2018.Line.RegressionFailedException;
 
 class LineTest {
 	
+	public static final double ACCURACY = 0.0000000000001;
+	
 	Point[] points3ordered = new Point[] {new Point(0,0), new Point(0,1), new Point(0,2)};
 	Point[] points3scrambled = new Point[] {new Point(0,2), new Point(0,0), new Point(0,1)};
 	Point[] points3 = new Point[] {new Point(1,0), new Point(0,1), new Point(1,2)};
@@ -77,6 +79,41 @@ class LineTest {
 		Line l2 = new Line(points3scrambled);
 		
 		assertEquals(l1, l2);
+	}
+	
+	@Test
+	void testEqualsSamePointTwiceInLine() {
+		Point p1 = new Point();
+		Point p2 = new Point();
+		
+		Point p3 = new Point(0,1);
+		
+		Line l1 = new Line(new Point[] {p1,p2});
+		Line l2 = new Line(new Point[] {p1, p3});
+		
+		assertNotEquals(l1, l2);
+	}
+	
+	@Test
+	void testObjectEqualsItself() {
+		Line l1 = new Line();
+		
+		assertEquals(l1, l1);
+	}
+	
+	@Test
+	void testLinesWithDifferentLenghtDontEqual() {
+		Line l1 = new Line();
+		Line l2 = new Line(points3);
+		
+		assertNotEquals(l1, l2);
+	}
+	
+	@Test
+	void testLineDowsNotEqualNull() {
+		Line l1 = new Line();
+		
+		assertNotEquals(l1, null);
 	}
 	
 	/*
@@ -171,14 +208,28 @@ class LineTest {
 	}
 	
 	@Test
-	void testThrowsExceptionWhenSlopeNotCalculatable() {
+	void testReturnsCorrectSlopeForSixPoints() throws RegressionFailedException {
+		Line l1 = new Line();
+		
+		l1.add(new Point(1,0));		
+		l1.add(new Point(3,0));
+		l1.add(new Point(5,0));
+		l1.add(new Point(0,1));
+		l1.add(new Point(0,3));
+		l1.add(new Point(0,5));
+		
+		assertEquals(-0.627906976744186, l1.slope(), ACCURACY);
+	}
+	
+	@Test
+	void testThrowsExceptionWhenSlopeNotCalculable() {
 		Line l1 = new Line(points3ordered);
 		
 		assertThrows(RegressionFailedException.class, () -> l1.slope());
 	}
 	
 	@Test
-	void testAddPointOtherSlope() throws RegressionFailedException {
+	void testAddPointsOtherSlope() throws RegressionFailedException {
 		Line l1 = new Line(points45degree);
 		
 		assertEquals(1.0, l1.slope());
@@ -188,5 +239,52 @@ class LineTest {
 		l1.add(new Point(0,3));
 		
 		assertNotEquals(1.0, l1.slope());
+	}
+	
+	/*
+	 * METHOD intercept
+	 */
+	@Test
+	void testInterceptReturnsCorrectValue() throws RegressionFailedException {
+		Point p1 = new Point(0,1);
+		Point p2 = new Point(1,2);
+		Line l1 = new Line(new Point[] {p1,p2});
+		
+		assertEquals(1.0, l1.intercept());
+	}
+	
+	@Test
+	void testInterceptReturnsCorrectValueForLargerLines() throws RegressionFailedException {
+		Line l1 = new Line();
+		
+		l1.add(new Point(1,0));		
+		l1.add(new Point(3,0));
+		l1.add(new Point(5,0));
+		l1.add(new Point(0,1));
+		l1.add(new Point(0,3));
+		l1.add(new Point(0,5));
+		
+		assertEquals(2.441860465116279, l1.intercept(), ACCURACY);
+	}
+	
+	@Test
+	void testInterceptThrowsExceptionWhenNotCalculable() {
+		Line l1 = new Line();
+
+		l1.add(new Point(0,1));
+		l1.add(new Point(0,3));
+		l1.add(new Point(0,5));
+
+		assertThrows(RegressionFailedException.class, () -> l1.intercept());
+	}
+	
+	@Test
+	void testInterceptWithNaNforValidLine() {
+		Line l1 = new Line();
+		
+		l1.add(new Point(Double.NaN, Double.NaN));
+		l1.add(new Point());
+		
+		assertThrows(RegressionFailedException.class, ()-> l1.intercept());
 	}
 }
