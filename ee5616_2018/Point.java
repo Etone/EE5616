@@ -1,5 +1,7 @@
 package ee5616_2018;
 
+import java.util.Locale;
+
 public class Point {
 
 	private double x;
@@ -93,7 +95,7 @@ public class Point {
 	
 	@Override
 	public String toString() {
-		return String.format("( %+.4E, %+.4E )", x, y);
+		return String.format(Locale.ENGLISH, "( %+.4E, %+.4E )", x, y);
 	}
 	
 	/*
