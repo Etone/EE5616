@@ -90,10 +90,10 @@ public class Line {
 			this.ensureEnoughPointsForRegressionCalculation();
 			this.slope();
 			this.intercept();
+			return true;
 		} catch (RegressionFailedException e) {
 			return false;
 		}
-		return true;
 	}
 	
 	public double slope() throws RegressionFailedException {
