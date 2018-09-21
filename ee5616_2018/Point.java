@@ -102,10 +102,6 @@ public class Point {
 	public class AngleOutOfRangeException extends Exception{
 		private static final long serialVersionUID = -3726276637567215315L;
 		
-		public AngleOutOfRangeException() {
-			super();
-		}
-		
 		public AngleOutOfRangeException(String message) {
 			super(message);
 		}
