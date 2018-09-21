@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import ee5616_2018.Point.AngleOutOfRangeException;
 
 class PointTest {
+	
+	public static final double ACCURACY = 0.0000000000001;
 
 	@Test
 	void testDefaultConstructor() {
@@ -221,7 +223,8 @@ class PointTest {
 	@Test
 	void testRotatePos180Fail() {
 		try {
-			new Point(0, 0).rotate(180 + Double.MIN_VALUE);
+			//new Point(0, 0).rotate(180 + Double.MIN_VALUE);
+			new Point(0, 0).rotate(180 + ACCURACY);
 			fail("Missing exception");
 		} catch (AngleOutOfRangeException e) {
 			
@@ -231,7 +234,8 @@ class PointTest {
 	@Test
 	void testRotateNeg180Fail() {
 		try {
-			new Point(0, 0).rotate(-180 - Double.MIN_VALUE);
+			//new Point(0, 0).rotate(-180 - Double.MIN_VALUE);
+			new Point(0, 0).rotate(-180 - ACCURACY);
 			fail("Missing exception");
 		} catch (AngleOutOfRangeException e) {
 			
