@@ -107,7 +107,13 @@ public class Line {
 			double y = calcY();
 			double x2 = calcX2();
 
-			this.slope = (xy - (x * y)) / (x2 - (x*x));
+			double slope = (xy - (x * y)) / (x2 - (x*x));
+			
+			if (!Double.isFinite(slope)) {
+				throw new RegressionFailedException();
+			}
+			
+			this.slope = slope;
 		}
 		return this.slope;
 	}
@@ -120,7 +126,13 @@ public class Line {
 			double a = slope();
 			double x = calcX();
 			
-			this.intercept = y - (a * x);
+			double intercept = y - (a * x);
+			
+			if (!Double.isFinite(slope)) {
+				throw new RegressionFailedException();
+			}
+			
+			this.intercept = intercept;
 		}
 		return this.intercept;
 	}
