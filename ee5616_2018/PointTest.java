@@ -193,7 +193,7 @@ class PointTest {
 		Point p = new Point(1, 0);
 		p.rotate(90);
 		assertEquals(0, p.getX(), ACCURACY);
-		assertEquals(-1, p.getY(), ACCURACY);
+		assertEquals(1, p.getY(), ACCURACY);
 	}
 	
 	@Test
@@ -209,7 +209,7 @@ class PointTest {
 		Point p = new Point(1, 0);
 		p.rotate(-90);
 		assertEquals(0, p.getX(), ACCURACY);
-		assertEquals(1, p.getY(), ACCURACY);
+		assertEquals(-1, p.getY(), ACCURACY);
 	}
 	
 	@Test
