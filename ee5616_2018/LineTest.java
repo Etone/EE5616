@@ -48,8 +48,7 @@ class LineTest {
 	}
 	
 	/*
-	 * METHOD LENGHT
-	 * 
+	 * METHOD LENGTH
 	 */
 	@Test
 	void testLengthReturnsCorrectLengthNotEmpty() {
@@ -121,7 +120,7 @@ class LineTest {
 		String wantedOutput = String.format(
 				"(%s," + System.lineSeparator() 
 				+ " %s," + System.lineSeparator()
-				+ " %s" + System.lineSeparator() + ")", points3[0], points3[1], points3[2]);
+				+ " %s)", points3[0], points3[1], points3[2]);
 		
 		assertEquals(wantedOutput, l1.toString());
 		
