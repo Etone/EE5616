@@ -35,8 +35,10 @@ public class Point {
 			throw new AngleOutOfRangeException("Angle must be between -180 and 180 degree");
 		}
 		
-		double tempX = x * Math.cos(theta) - y * Math.sin(theta);
-		double tempY = y * Math.cos(theta) + x * Math.sin(theta);
+		double radTheta = Math.toRadians(theta);
+		
+		double tempX = x * Math.cos(radTheta) - y * Math.sin(radTheta);
+		double tempY = y * Math.cos(radTheta) + x * Math.sin(radTheta);
 		
 		x = tempX;
 		y = tempY;
@@ -82,16 +84,16 @@ public class Point {
 			return true;
 		
 		Point other = (Point) obj;
-		if (x != other.x)
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
 			return false;
-		if (y!= other.y)
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
 			return false;
 		return true;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("(%+.4E, %+.4E)", x, y);
+		return String.format("( %+.4E, %+.4E )", x, y);
 	}
 	
 	/*
