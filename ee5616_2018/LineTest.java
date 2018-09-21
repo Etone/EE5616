@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import ee5616_2018.Line.RegressionFailedException;
+
 class LineTest {
 	
 	Point[] points3ordered = new Point[] {new Point(0,0), new Point(0,1), new Point(0,2)};
 	Point[] points3scrambled = new Point[] {new Point(0,2), new Point(0,0), new Point(0,1)};
 	Point[] points3 = new Point[] {new Point(1,0), new Point(0,1), new Point(1,2)};
+	Point[] points45degree = new Point[] {new Point(1,1), new Point(2,2), new Point(3,3)};
 	
 	
 	/*
@@ -36,7 +39,7 @@ class LineTest {
 		Line l = new Line();
 		l.add(new Point(0,1));
 		
-		assertEquals(l.length(), 1);
+		assertEquals(1, l.length());
 	}
 	
 	@Test
@@ -44,7 +47,7 @@ class LineTest {
 		Line l = new Line();
 		l.add(null);
 		
-		assertEquals(l.length(), 0);
+		assertEquals(0,l.length());
 	}
 	
 	/*
@@ -54,7 +57,7 @@ class LineTest {
 	void testLengthReturnsCorrectLengthNotEmpty() {
 		Line l1 = new Line(points3);
 		
-		assertEquals(l1.length(), 3);
+		assertEquals(3, l1.length());
 	}
 	
 	/*
@@ -123,7 +126,67 @@ class LineTest {
 				+ " %s)", points3[0], points3[1], points3[2]);
 		
 		assertEquals(wantedOutput, l1.toString());
+	}
+	
+	/*
+	 * METHOD isValid
+	 */
+	@Test
+	void testIsInvalidWhenZeroPointsAreStored() {
+		Line l1 = new Line();
 		
+		assertFalse(l1.isValid());
+	}
+	
+	@Test
+	void testIsInvalidWhenOnePointIsStored() {
+		Line l1 = new Line();
+		l1.add(new Point());
 		
+		assertFalse(l1.isValid());
+	}
+	
+	@Test
+	void testIsInvalidWhenSlopeOrInterceptCanNotBeCalculated() {
+		Line l1 = new Line(points3ordered);
+		
+		assertFalse(l1.isValid());
+	}
+	
+	@Test
+	void testLineIsValid() {
+		Line l1 = new Line(points45degree);
+		
+		assertTrue(l1.isValid());
+	}
+	
+	/*
+	 * METHOD slope
+	 */
+	@Test
+	void testReturnsCorrectSlopeForLine() throws RegressionFailedException{
+		Line l1 = new Line(points45degree);
+		
+		assertEquals(1.0, l1.slope());
+	}
+	
+	@Test
+	void testThrowsExceptionWhenSlopeNotCalculatable() {
+		Line l1 = new Line(points3ordered);
+		
+		assertThrows(RegressionFailedException.class, () -> l1.slope());
+	}
+	
+	@Test
+	void testAddPointOtherSlope() throws RegressionFailedException {
+		Line l1 = new Line(points45degree);
+		
+		assertEquals(1.0, l1.slope());
+		
+		l1.add(new Point(0,1));
+		l1.add(new Point(0,2));
+		l1.add(new Point(0,3));
+		
+		assertNotEquals(1.0, l1.slope());
 	}
 }
