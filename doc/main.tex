@@ -1,0 +1,83 @@
+\include{preambel}
+\input{config.listing}
+%---------------------------------------------------------------------
+%--- Document begins here
+%---------------------------------------------------------------------
+
+\begin{document}
+\onehalfspacing
+
+%---------------------------------------------------------------------
+%--- Title page
+%---------------------------------------------------------------------
+
+\begin{titlepage}
+\center
+
+% Name of university, college, department and degree
+\textsc{\LARGE \theuniversity} \\[1.5cm] 
+\textsc{\large 
+\thecollege \\
+\thedepartment} \\[1.5cm]
+\textsc{\Large \thecoursetitle} \\[2.0cm]
+
+% Project title
+\rule{\linewidth}{0.5mm} \\[0.5cm]
+{ \huge\textbf{ \thetitle } } \\
+\rule{\linewidth}{0.5mm} \\[4.5cm]
+
+% Student name, student number and supervisor
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\thestudent \\
+Student Number: \thestudentid
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Lab partner:} \\
+\thelabpartner
+\end{flushright}
+\end{minipage}\\[4cm]
+
+% Year
+{\large Year of Submission: \theyear} \\[3cm] 
+
+\vfill % Fill the rest of the page with whitespace
+\end{titlepage}
+\newpage
+
+%---------------------------------------------------------------------
+%--- Front matter
+%---------------------------------------------------------------------
+
+\pagenumbering{roman}
+
+\input{frontmatter}
+
+\tableofcontents
+\newpage
+
+%---------------------------------------------------------------------
+%--- Main part of thesis
+%---------------------------------------------------------------------
+
+\pagenumbering{arabic}
+
+\include{chapters/ex1}
+\include{chapters/ex2}
+\include{chapters/ex3}
+\include{chapters/ex4}
+
+%---------------------------------------------------------------------
+%--- Bibliography and appendices
+%---------------------------------------------------------------------
+
+\printbibliography
+\addcontentsline{toc}{chapter}{Bibliography}
+
+\appendix
+\input{appendices}
+		
+\end{document}

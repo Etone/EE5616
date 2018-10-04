@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
 
@@ -16,24 +18,25 @@ import uk.ac.brunel.ee.lineRead;
 
 public class AnalysisRunner {
 
-	private static final int RNG_LINES = 15;
-	private static final int RNG_MAX_POINTS_PER_LINE = 30;
-	
+	//Paths to dat files
 	private static final String DATA_SHORT = "C:\\Workspace\\TAE\\EE5616\\data_short.dat";
 	private static final String DATA_LONG = "C:\\Workspace\\TAE\\EE5616\\data_long.dat";
-
+	
+	//lines to analyse
 	private static List<Line> lines = new ArrayList<>();
 	
+	//timestamp start reading and end reading for display purpose
 	private static long startRead = 0l;
 	private static long stopRead = 0l;
 	
+	//Map classes to statistics for this class
 	private static Map<Integer, LineClassStatistic> mapClass2TimeStatistics = new TreeMap<>();
 	
-	public static void main(String[] args) throws RegressionFailedException, UnreadException, RereadException {		
+	public static void main(String[] args) throws RegressionFailedException, UnreadException, RereadException {	
 		
+		long startExecution = System.currentTimeMillis();
 		startRead = System.currentTimeMillis();
-		//lines = generateRandomLines();
-		readLineFromFile(DATA_SHORT);
+		readLineFromFile(DATA_LONG);
 		stopRead = System.currentTimeMillis();
 		
 		//Uncached slope and intercept calc
@@ -41,21 +44,22 @@ public class AnalysisRunner {
 		
 		LineStatistics.calcMetrics();
 		
-		for (LineClassStatistic lcs : mapClass2TimeStatistics.values()) {
-			lcs.calcAvgs();
-		}
+		mapClass2TimeStatistics.forEach((lineClass, lineClassStatistics) -> lineClassStatistics.calcAvgs());
 		
 		double startPrint = System.currentTimeMillis();
 		printFormatted(format());
 		double endPrint = System.currentTimeMillis();
 		
 		System.out.println(String.format("Printing Results took %.0f miliseconds", endPrint - startPrint));
+		
+		long stopExecution = System.currentTimeMillis();
+		System.out.println(String.format("Execution took %d seconds", (stopExecution-startExecution) / 1000));
 	}
 	
 	private static void measureSlopeAndIntercept() {
 		for (Line line : lines) {
 			LineClassStatistic lcs = mapClass2TimeStatistics.get(line.length());
-			TupleTimeResult timeSlope = DurationTimer.measureDurationForCallInNs(()-> {
+			Tuple<Double, Long> timeSlope = DurationTimer.measureDurationForCallInNs(()-> {
 				try {
 					return line.slope();
 				} catch (RegressionFailedException e) {
@@ -64,7 +68,7 @@ public class AnalysisRunner {
 				}
 			});
 			
-			TupleTimeResult timeIntercept = DurationTimer.measureDurationForCallInNs(()-> {
+			Tuple<Double, Long> timeIntercept = DurationTimer.measureDurationForCallInNs(()-> {
 				try {
 					return line.intercept();
 				} catch (RegressionFailedException e) {
@@ -93,17 +97,23 @@ public class AnalysisRunner {
 		
 		sb.append(System.lineSeparator());
 		
-		sb.append(String.format("Time needed to read file: %.2fs %n %n",(double) (stopRead - startRead) / (double) 1000));
+		sb.append(String.format("Time needed to read file: %ds %n %n", (stopRead - startRead) / 1000));
 		
 		sb.append("Timings per points in line (avg)" + System.lineSeparator());
+		sb.append("________________________________" + System.lineSeparator());
 		sb.append(System.lineSeparator());
-		sb.append(String.format("%5s %20s %20s %20s %20s %n", "Class", "getX (ms)", "getY (ms)", "slope (ns)", "intercept (ns)"));
+		sb.append(String.format("%6s %21s %21s %21s %21s %31s %n", "Class*",
+				"getX (ms)", "getY (ms)",
+				"slope (ms)", "intercept (ms)",
+				"Loadtimes for lines(ms)**"));
 		for (int i : mapClass2TimeStatistics.keySet()) {
 			LineClassStatistic lcs = mapClass2TimeStatistics.get(i);
-			sb.append(String.format("%5d %20.2f %20.2f %20.0f %20.0f %n",
-					i, lcs.getXAvg, lcs.getYAvg, lcs.slopeUnchachedAvg, lcs.interceptUnchachedAvg));
+			sb.append(String.format("%5d; %20.7f; %20.7f; %20.7f; %20.7f; %30.2f; %n",
+					i, lcs.getXAvg, lcs.getYAvg, lcs.slopeUnchachedAvg / (double) 1000000, lcs.interceptUnchachedAvg/ (double) 1000000, lcs.loadTimeLineAvg));
 		}
-		
+		sb.append(System.lineSeparator());
+		sb.append(" *  each class represents lines with n points (f.e. Class 2 means all lines with length=2)" + System.lineSeparator());
+		sb.append("**  including time for measuring times for getX and getY"+ System.lineSeparator());
 		sb.append(System.lineSeparator());
 		//Metrics Section
 		sb.append("------------------------------------------------------------------" + System.lineSeparator());
@@ -112,7 +122,7 @@ public class AnalysisRunner {
 		sb.append(String.format("Total number of lines: %d ( %d valid | %d invalid ) %n",
 				LineStatistics.numberInvalidLines + LineStatistics.numberValidLines,
 				LineStatistics.numberValidLines, LineStatistics.numberInvalidLines));
-		sb.append(String.format("Average number of points per valid line %.2f %n", LineStatistics.avgNumberPointsPerLine ));
+		sb.append(String.format("Average number of points line (valid and invalid) %.2f %n", LineStatistics.avgNumberPointsPerLine ));
 		sb.append(String.format("%20s %10f %30s %10f %n",
 				"Average slope:", LineStatistics.avgSlope,
 				"standard deviation slope:", LineStatistics.stdDevSlope));
@@ -127,13 +137,14 @@ public class AnalysisRunner {
 		lineRead reader = new lineRead(path);
 		
 		
-		List<Double> bufferGetXDurations = new ArrayList<>();
-		List<Double> bufferGetYDurations = new ArrayList<>();
+		List<Long> bufferGetXDurations = new ArrayList<>();
+		List<Long> bufferGetYDurations = new ArrayList<>();
 
 		while (reader.nextLine()) {
+			long startTimeReadLine = System.currentTimeMillis();
 			Line line = new Line();
 			while (reader.nextPoint()) {
-				TupleTimeResult getX =  DurationTimer.measureDurationForCallInMs(() -> {
+				Tuple<Double, Long> getX =  DurationTimer.measureDurationForCallInMs(() -> {
 					try {
 						return reader.getX();
 					} catch (RereadException e) {
@@ -141,7 +152,7 @@ public class AnalysisRunner {
 					}
 				});
 				
-				TupleTimeResult getY =  DurationTimer.measureDurationForCallInMs(() -> {
+				Tuple<Double, Long> getY =  DurationTimer.measureDurationForCallInMs(() -> {
 					try {
 						return reader.getY();
 					} catch (RereadException e) {
@@ -155,8 +166,13 @@ public class AnalysisRunner {
 				
 				line.add(new Point(getX.getResult(), getY.getResult()));
 			}
+			long stopTimeReadLine = System.currentTimeMillis();
 			//Store results from time measurement GetX and GetY
 			storeTimeMeasurementsGetXGetY(line.length(), bufferGetXDurations, bufferGetYDurations);
+			
+			//calc duration for Line and add to Class Stats
+			storeTimeMeasurementReadLine(line.length(), stopTimeReadLine-startTimeReadLine);
+			
 			//reset buffers
 			bufferGetXDurations.clear();
 			bufferGetYDurations.clear();
@@ -165,8 +181,14 @@ public class AnalysisRunner {
 		}
 	}
 	
-	private static void storeTimeMeasurementsGetXGetY(int lineClass, List<Double> bufferGetXDurations,
-			List<Double> bufferGetYDurations) {
+	private static void storeTimeMeasurementReadLine(int length, long durationReadLine) {
+		//dont have to check if key is there as it is checked when storing getX and getY which is called first
+		//Normally not smart, but for this it will do
+		mapClass2TimeStatistics.get(length).timingsLoadingLine.add(durationReadLine);
+	}
+
+	private static void storeTimeMeasurementsGetXGetY(int lineClass, List<Long> bufferGetXDurations,
+			List<Long> bufferGetYDurations) {
 		if (mapClass2TimeStatistics.containsKey(lineClass)) {
 			mapClass2TimeStatistics.get(lineClass).timingsGetX.addAll(bufferGetXDurations);
 			mapClass2TimeStatistics.get(lineClass).timingsGetY.addAll(bufferGetYDurations);
@@ -179,31 +201,12 @@ public class AnalysisRunner {
 		}
 		
 	}
-
-	//Fast way to generate random lines for faster testing with bigger lines
-	// and invalid lines then data_long.dat reading
-	// does not measure getX and getY times, as they are not present
-	private static List<Line> generateRandomLines(){
-		List<Line> lines = new ArrayList<>();
-		
-		Random rand = new Random();
-		
-		for (int i = 0; i < RNG_LINES; i++) {
-			Line line = new Line();
-			int pointsInLine = rand.nextInt(RNG_MAX_POINTS_PER_LINE);
-			for (int j = 0; j < pointsInLine; j++) {
-				line.add(new Point(rand.nextDouble(), rand.nextDouble()));
-			}
-			lines.add(line);
-		}
-		return lines;
-	}
 	
 	public static class DurationTimer {
 		private static long startCall;
 		private static long stopCall;
 		
-		public static TupleTimeResult measureDurationForCallInNs(Supplier<Double> func) {
+		public static Tuple<Double, Long> measureDurationForCallInNs(Supplier<Double> func) {
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.nanoTime();
 			double result = func.get();
@@ -211,11 +214,11 @@ public class AnalysisRunner {
 			
 			long duration =  stopCall-startCall;
 			
-			return new TupleTimeResult(result, duration);
+			return new Tuple<Double, Long>(result, duration);
 		}
 		
 
-		public static TupleTimeResult measureDurationForCallInMs(Supplier<Double> func) {
+		public static Tuple<Double, Long> measureDurationForCallInMs(Supplier<Double> func) {
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.currentTimeMillis();
 			double result = func.get();
@@ -223,35 +226,35 @@ public class AnalysisRunner {
 			
 			long duration =  stopCall-startCall;
 			
-			return new TupleTimeResult(result, duration);
+			return new Tuple<Double, Long>(result, duration);
 		}
 	}
 	
 	/**
 	 * Tuple Class for result from time measured method
 	 */
-	public static class TupleTimeResult {
-		private double result;
-		private double duration;
+	public static class Tuple<R,D> {
+		private R result;
+		private D duration;
 		
-		public TupleTimeResult(double result, long duration) {
+		public Tuple(R result, D duration) {
 			this.result = result;
 			this.duration = duration;
 		}
 		
-		public double getDuration() {
+		public D getDuration() {
 			return duration;
 		}
 		
-		public double getResult() {
+		public R getResult() {
 			return result;
 		}
 		
-		public void setDuration(double duration) {
+		public void setDuration(D duration) {
 			this.duration = duration;
 		}
 		
-		public void setResult(double result) {
+		public void setResult(R result) {
 			this.result = result;
 		}
 	}
@@ -262,13 +265,16 @@ public class AnalysisRunner {
 	 *
 	 */
 	public static class LineClassStatistic {
-		List<Double> timingsGetX = new ArrayList<>();
-		List<Double> timingsGetY = new ArrayList<>();
-		List<Double> timingsSlopeUnchached = new ArrayList<>();
-		List<Double> timingsInterceptUncached = new ArrayList<>();
+		//keep everything double for easier avg calculations and unified interfaces
+		List<Long> timingsGetX = new ArrayList<>();
+		List<Long> timingsGetY = new ArrayList<>();
+		List<Long> timingsSlopeUnchached = new ArrayList<>();
+		List<Long> timingsInterceptUncached = new ArrayList<>();
+		List<Long> timingsLoadingLine = new ArrayList<>();
 		
 		double getXAvg = Double.NaN;
 		double getYAvg = Double.NaN;
+		double loadTimeLineAvg = Double.NaN;
 		
 		double slopeUnchachedAvg = Double.NaN;
 		double interceptUnchachedAvg = Double.NaN;
@@ -278,10 +284,11 @@ public class AnalysisRunner {
 			getYAvg = calcAvgFromList(timingsGetY);
 			slopeUnchachedAvg = calcAvgFromList(timingsSlopeUnchached);
 			interceptUnchachedAvg = calcAvgFromList(timingsInterceptUncached);
+			loadTimeLineAvg = calcAvgFromList(timingsLoadingLine);
 		}
 		
-		private double calcAvgFromList(List<Double> list) {
-			OptionalDouble optDoub = list.stream().mapToDouble(a -> a).average();
+		private double calcAvgFromList(List<Long> list) {
+			OptionalDouble optDoub = list.stream().mapToLong(a -> a).average();
 			double val = optDoub.isPresent() ? optDoub.getAsDouble() : Double.NaN;
 			return val;
 		}
@@ -348,7 +355,7 @@ public class AnalysisRunner {
 
 		private static void calcAvgNumberPointsPerLine() {
 			//cast to double to get correct result, else it always would cut off floating points
-			avgNumberPointsPerLine = (double) numberPoints / (double) numberValidLines;
+			avgNumberPointsPerLine = (double) numberPoints / (double) (numberValidLines + numberInvalidLines);
 		}
 
 		private static void calcNumberVaildInvalidLines() throws RegressionFailedException {
