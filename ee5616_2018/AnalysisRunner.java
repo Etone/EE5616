@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
 
@@ -37,13 +35,12 @@ public class AnalysisRunner {
 		long startExecution = System.currentTimeMillis();
 		startRead = System.currentTimeMillis();
 		readLineFromFile(DATA_LONG);
-		stopRead = System.currentTimeMillis();
+    stopRead = System.currentTimeMillis();
 		
 		//Uncached slope and intercept calc
 		measureSlopeAndIntercept();
 		
 		LineStatistics.calcMetrics();
-		
 		mapClass2TimeStatistics.forEach((lineClass, lineClassStatistics) -> lineClassStatistics.calcAvgs());
 		
 		double startPrint = System.currentTimeMillis();
@@ -51,7 +48,6 @@ public class AnalysisRunner {
 		double endPrint = System.currentTimeMillis();
 		
 		System.out.println(String.format("Printing Results took %.0f miliseconds", endPrint - startPrint));
-		
 		long stopExecution = System.currentTimeMillis();
 		System.out.println(String.format("Execution took %d seconds", (stopExecution-startExecution) / 1000));
 	}
@@ -114,6 +110,8 @@ public class AnalysisRunner {
 		sb.append(System.lineSeparator());
 		sb.append(" *  each class represents lines with n points (f.e. Class 2 means all lines with length=2)" + System.lineSeparator());
 		sb.append("**  including time for measuring times for getX and getY"+ System.lineSeparator());
+
+
 		sb.append(System.lineSeparator());
 		//Metrics Section
 		sb.append("------------------------------------------------------------------" + System.lineSeparator());
@@ -123,6 +121,7 @@ public class AnalysisRunner {
 				LineStatistics.numberInvalidLines + LineStatistics.numberValidLines,
 				LineStatistics.numberValidLines, LineStatistics.numberInvalidLines));
 		sb.append(String.format("Average number of points line (valid and invalid) %.2f %n", LineStatistics.avgNumberPointsPerLine ));
+
 		sb.append(String.format("%20s %10f %30s %10f %n",
 				"Average slope:", LineStatistics.avgSlope,
 				"standard deviation slope:", LineStatistics.stdDevSlope));
@@ -166,6 +165,7 @@ public class AnalysisRunner {
 				
 				line.add(new Point(getX.getResult(), getY.getResult()));
 			}
+
 			long stopTimeReadLine = System.currentTimeMillis();
 			//Store results from time measurement GetX and GetY
 			storeTimeMeasurementsGetXGetY(line.length(), bufferGetXDurations, bufferGetYDurations);
@@ -181,6 +181,7 @@ public class AnalysisRunner {
 		}
 	}
 	
+
 	private static void storeTimeMeasurementReadLine(int length, long durationReadLine) {
 		//dont have to check if key is there as it is checked when storing getX and getY which is called first
 		//Normally not smart, but for this it will do
@@ -189,6 +190,7 @@ public class AnalysisRunner {
 
 	private static void storeTimeMeasurementsGetXGetY(int lineClass, List<Long> bufferGetXDurations,
 			List<Long> bufferGetYDurations) {
+
 		if (mapClass2TimeStatistics.containsKey(lineClass)) {
 			mapClass2TimeStatistics.get(lineClass).timingsGetX.addAll(bufferGetXDurations);
 			mapClass2TimeStatistics.get(lineClass).timingsGetY.addAll(bufferGetYDurations);
@@ -201,12 +203,15 @@ public class AnalysisRunner {
 		}
 		
 	}
+
 	
 	public static class DurationTimer {
 		private static long startCall;
 		private static long stopCall;
 		
+
 		public static Tuple<Double, Long> measureDurationForCallInNs(Supplier<Double> func) {
+
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.nanoTime();
 			double result = func.get();
@@ -219,6 +224,7 @@ public class AnalysisRunner {
 		
 
 		public static Tuple<Double, Long> measureDurationForCallInMs(Supplier<Double> func) {
+
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.currentTimeMillis();
 			double result = func.get();
@@ -238,6 +244,7 @@ public class AnalysisRunner {
 		private D duration;
 		
 		public Tuple(R result, D duration) {
+
 			this.result = result;
 			this.duration = duration;
 		}
@@ -255,6 +262,7 @@ public class AnalysisRunner {
 		}
 		
 		public void setResult(R result) {
+
 			this.result = result;
 		}
 	}
@@ -275,6 +283,7 @@ public class AnalysisRunner {
 		double getXAvg = Double.NaN;
 		double getYAvg = Double.NaN;
 		double loadTimeLineAvg = Double.NaN;
+
 		
 		double slopeUnchachedAvg = Double.NaN;
 		double interceptUnchachedAvg = Double.NaN;
@@ -289,6 +298,7 @@ public class AnalysisRunner {
 		
 		private double calcAvgFromList(List<Long> list) {
 			OptionalDouble optDoub = list.stream().mapToLong(a -> a).average();
+
 			double val = optDoub.isPresent() ? optDoub.getAsDouble() : Double.NaN;
 			return val;
 		}
