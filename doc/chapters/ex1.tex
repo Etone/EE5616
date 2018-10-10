@@ -1,5 +1,48 @@
 \chapter{Exercise 1}
 
-In the first Exercise a class Point was implemented.
-The developed code can be found in the Appendix (\ref{lst:point}).
-The following paragraph reasoning 
+In the first exercise a class Point was implemented. The developed code can be found in the Appendix (\ref{lst:point}). The following paragraph will reason about different aspects of the code and why things where solved.
+
+The class Point represents a point by it's cartesian coodinates. For this the variables x and y where choosen. As described in the exercise the class should have two constructors.
+
+\begin{lstlisting}[
+    language=java,
+    caption=Constructor method headers for class Point]
+    //default ctor with x=0.0, y=0.0
+    public Point(){}
+
+    //parametricized ctor
+    public Point(double x, double y){}
+\end{lstlisting}
+
+Further methods for normalizing, rotating and displacing the point are given by the following methods.
+
+\begin{lstlisting}[
+    language=java,
+    caption=Methods in class Point]
+    //calculates distance from origin to point (normalizing vector)
+    public double norm(){}
+
+    //rotates point around origin by theta degrees
+    public void rotate(double theta){}
+
+    //moves the point by amount p.x and p.y
+    public void displace(Point p){}
+\end{lstlisting}
+
+Also the methods hashcode, equals and toString where overriden to coorespond to the defined behaviour. In the following section some reason is given on the specific implementation for each of these methods
+
+\section{Method hashCode}
+As an hashing algorithm a very basic and simple default is provided by eclipse. This can be described be the following equation.
+
+\begin{displaymath}
+    hash(p.x) = prime \cdot 1 + (x \oplus (x \gg 32))
+\end{displaymath}
+\begin{displaymath}
+    hash(p) = prime \cdot hash(p.x) + (y \oplus (y \gg 32))
+\end{displaymath}
+
+\section{Method equals}
+
+\section{Method toString}
+
+
