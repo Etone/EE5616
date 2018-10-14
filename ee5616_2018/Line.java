@@ -43,19 +43,10 @@ public class Line {
 				return false;
 			}
 			
-			for (Point p : this.points) {
-				if (!other.points.contains(p)) {
-					return false;
-				}
-			}
+			List<Point> localCopy = new ArrayList<>(this.points);
+			localCopy.removeAll(other.points);
 			
-			for (Point p : other.points) {
-				if (!this.points.contains(p)) {
-					return false;
-				}
-			}
-
-			return true;
+			return localCopy.isEmpty();
 		}
 		return false;
 	}
