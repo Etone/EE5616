@@ -41,8 +41,22 @@ As an hashing algorithm a very basic and simple default is provided by eclipse. 
     hash(p) = prime \cdot hash(p.x) + (y \oplus (y \gg 32))
 \end{displaymath}
 
+Since only the values of x and y are used and no other random aspects can occur during this calculation the value for to points will be equal, if they are equal as defined in the equals method.
+
 \section{Method equals}
+The method equals was overridden to check the values of x and y. If those are the same equals() returns true, else it returns false. There are no checks for when equals is called with something other then another point, as this should be done by the caller before. The check \lstinline[language=java]{if(this == obj)} is done for faster comparrison of the same object.
+To safely compare the values of x and y, the following code is used.
+\begin{lstlisting}[language=java, caption=Safely compare double values in java]
+    if(Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {...}
+\end{lstlisting}
+
+This was crucially as in Java \lstinline[language=java, breaklines=true]{Double.NaN == Double.NaN} is false and nearly all error handling was done by setting the values of x and y to NaN.
+
+\lstinline[language=java, breaklines=true]{Double.doubleToLongBits(Double.NaN) == Double.doubleToLongBits(Double.NaN)} on the other hand is true.
 
 \section{Method toString}
-
-
+As the output format of toString() was given bei the exercise, the default toString method was overridden. As the commata seperator was \textbf{.} instead of \textbf{,} (which is used in germany) the output locale was setted in Code.
+\begin{lstlisting}[language=java, caption=Setting locale to get correctly printed decimal seperator]
+    String.format(Locale.ENGLISH, "...", x, y);
+\end{lstlisting}
+This overrides the systemwide set locale and corresponds to the correct commata seperator. Also the values of x and y are printed in sientific notation with four decimals.
