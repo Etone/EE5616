@@ -44,7 +44,7 @@ public class Line {
 			}
 			
 			List<Point> localCopy = new ArrayList<>(this.points);
-			localCopy.removeAll(other.points);
+			other.points.forEach(localCopy::remove);
 			
 			return localCopy.isEmpty();
 		}
