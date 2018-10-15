@@ -110,10 +110,31 @@ class LineTest {
 	}
 	
 	@Test
-	void testLineDowsNotEqualNull() {
+	void testLineDoesNotEqualNull() {
 		Line l1 = new Line();
 		
 		assertNotEquals(l1, null);
+	}
+	
+	@Test
+	void testLineAabNotEqualAbb() {
+		Point p1 = new Point();
+		Point p2 = new Point(1.0,1.0);
+		
+		//p1->p1->p2
+		Line l1 = new Line();
+		l1.add(p1);
+		l1.add(p1);
+		l1.add(p2);
+		
+		//p1->p2->p2
+		Line l2 = new Line();
+		l2.add(p1);
+		l2.add(p2);
+		l2.add(p2);
+		
+		//should not equal
+		assertFalse(l1.equals(l2));
 	}
 	
 	/*

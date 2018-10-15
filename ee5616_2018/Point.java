@@ -69,10 +69,15 @@ public class Point {
 	
 	@Override
 	public int hashCode() {
+		//arbitrary prime number
 		final int prime = 31;
+		//result of hashing algorithm
 		int result = 1;
+		//safely cast double x and y to int
 		long temp;
 		temp = Double.doubleToLongBits(x);
+		//temp^temp>>>31 = long temp^upper 32 bits of long temp, 
+		//as lower 32 bits are used in (int) cast.
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(y);
 		result = prime * result + (int) (temp ^ (temp >>> 32));

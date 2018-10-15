@@ -3,11 +3,8 @@ package ee5616_2018;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.Supplier;
-
 
 import ee5616_2018.Line.RegressionFailedException;
 import uk.ac.brunel.ee.RereadException;
@@ -43,11 +40,12 @@ public class AnalysisRunner {
 		LineStatistics.calcMetrics();
 		mapClass2TimeStatistics.forEach((lineClass, lineClassStatistics) -> lineClassStatistics.calcAvgs());
 		
-		double startPrint = System.currentTimeMillis();
+		long startPrint = System.currentTimeMillis();
 		printFormatted(format());
-		double endPrint = System.currentTimeMillis();
+		long endPrint = System.currentTimeMillis();
 		
-		System.out.println(String.format("Printing Results took %.0f miliseconds", endPrint - startPrint));
+		System.out.println(String.format("Printing Results took %d miliseconds", endPrint - startPrint));
+		
 		long stopExecution = System.currentTimeMillis();
 		System.out.println(String.format("Execution took %d seconds", (stopExecution-startExecution) / 1000));
 	}
@@ -120,8 +118,7 @@ public class AnalysisRunner {
 		sb.append(String.format("Total number of lines: %d ( %d valid | %d invalid ) %n",
 				LineStatistics.numberInvalidLines + LineStatistics.numberValidLines,
 				LineStatistics.numberValidLines, LineStatistics.numberInvalidLines));
-		sb.append(String.format("Average number of points line (valid and invalid) %.2f %n", LineStatistics.avgNumberPointsPerLine ));
-
+		sb.append(String.format("Average number of points (valid) line %.2f %n", LineStatistics.avgNumberPointsPerLine ));
 		sb.append(String.format("%20s %10f %30s %10f %n",
 				"Average slope:", LineStatistics.avgSlope,
 				"standard deviation slope:", LineStatistics.stdDevSlope));
@@ -210,29 +207,26 @@ public class AnalysisRunner {
 		private static long stopCall;
 		
 
-		public static Tuple<Double, Long> measureDurationForCallInNs(Supplier<Double> func) {
-
+		public static<T> Tuple<T, Long> measureDurationForCallInNs(Supplier<T> func) {
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.nanoTime();
-			double result = func.get();
+			T result = func.get();
 			stopCall = System.nanoTime();
 			
 			long duration =  stopCall-startCall;
 			
-			return new Tuple<Double, Long>(result, duration);
+			return new Tuple<T, Long>(result, duration);
 		}
 		
-
-		public static Tuple<Double, Long> measureDurationForCallInMs(Supplier<Double> func) {
-
+		public static <T> Tuple<T, Long> measureDurationForCallInMs(Supplier<T> func) {
 			//Measure time in nanoseconds (stamp before and after call)
 			startCall = System.currentTimeMillis();
-			double result = func.get();
+			T result = func.get();
 			stopCall = System.currentTimeMillis();
 			
 			long duration =  stopCall-startCall;
 			
-			return new Tuple<Double, Long>(result, duration);
+			return new Tuple<>(result, duration);
 		}
 	}
 	
@@ -297,10 +291,7 @@ public class AnalysisRunner {
 		}
 		
 		private double calcAvgFromList(List<Long> list) {
-			OptionalDouble optDoub = list.stream().mapToLong(a -> a).average();
-
-			double val = optDoub.isPresent() ? optDoub.getAsDouble() : Double.NaN;
-			return val;
+			return list.stream().mapToLong(a -> a).average().orElseGet(() -> Double.NaN);
 		}
 	}
 	
@@ -365,13 +356,13 @@ public class AnalysisRunner {
 
 		private static void calcAvgNumberPointsPerLine() {
 			//cast to double to get correct result, else it always would cut off floating points
-			avgNumberPointsPerLine = (double) numberPoints / (double) (numberValidLines + numberInvalidLines);
+			avgNumberPointsPerLine = (double) numberPoints / (double) numberValidLines;
 		}
 
 		private static void calcNumberVaildInvalidLines() throws RegressionFailedException {
 			for (Line l : lines) {
-				numberPoints += l.length();
 				if (l.isValid()) {
+					numberPoints += l.length();
 					numberValidLines++;
 					totalIntercept += l.intercept();
 					totalSlope += l.slope();
