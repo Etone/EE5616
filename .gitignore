@@ -16,7 +16,7 @@ hs_err_pid*
 *.toc
 *.fls
 *.fdb_latexmk
-*.syntex.gz
+*.synctex.gz
 *.bbl
 *.xml
 *.blg
