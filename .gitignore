@@ -17,3 +17,6 @@ hs_err_pid*
 *.fls
 *.fdb_latexmk
 *.syntex.gz
+*.bbl
+*.xml
+*.blg
