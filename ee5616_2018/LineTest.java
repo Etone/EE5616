@@ -1,5 +1,6 @@
 package ee5616_2018;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,13 @@ class LineTest {
 		assertEquals(0, l.length());
 	}
 	
+	@Test
+	void testCtorWithPointArrayInitializesLineWithPoints() {
+		Line l = new Line(points3);
+		
+		assertEquals(3, l.length());
+	}
+	
 	/*
 	 * METHOD ADD
 	 */
@@ -60,6 +68,14 @@ class LineTest {
 		Line l1 = new Line(points3);
 		
 		assertEquals(3, l1.length());
+	}
+	
+	@Test
+	void testLengthIncrementsWhenPointAdded() {
+		Line l1 = new Line();
+		l1.add(new Point());
+		
+		assertEquals(1, l1.length());
 	}
 	
 	/*
@@ -91,7 +107,7 @@ class LineTest {
 		Line l1 = new Line(new Point[] {p1,p2});
 		Line l2 = new Line(new Point[] {p1, p3});
 		
-		assertNotEquals(l1, l2);
+		assertFalse(l1.equals(l2));
 	}
 	
 	@Test
@@ -155,6 +171,16 @@ class LineTest {
 		
 		assertEquals(l1.hashCode(), l2.hashCode());
 	}
+	
+	@Test
+	void testHashCodeStaysSameForMultipleCalls() {
+		Line l1 = new Line(points3);
+		
+		int hash1 = l1.hashCode();
+		int hash2 = l1.hashCode();
+		
+		assertTrue(hash1 == hash2);
+	}	
 	
 	/*
 	 * METHOD toString
