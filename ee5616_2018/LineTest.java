@@ -223,14 +223,6 @@ class LineTest {
 	}
 	
 	@Test
-	void testIsInvalidWhenOnePointIsStored() {
-		Line l1 = new Line();
-		l1.add(new Point());
-		
-		assertFalse(l1.isValid());
-	}
-	
-	@Test
 	void testIsInvalidWhenSlopeOrInterceptCanNotBeCalculated() {
 		Line l1 = new Line(points3ordered);
 		

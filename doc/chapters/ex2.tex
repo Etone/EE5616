@@ -50,7 +50,7 @@ To test the equals method seven different cases were looked at. This amount come
     This test is a bit more complicated. Two lines, that are the same length, but with different points should not be equal. Also, the equals algorithm should deal with points double in line and not confuse them as beeing equal. For this two lines where created, one with the points ((0,0),(0,0)) and one with the points ((0,0),(0,1)). These two lines should not be equal. Depending on the implementation, the fact that one point is twice in one line can break the algorithm. To validate that the used implementation is safe this test was written.
     \item lines with different length should not be equal \\
     This test generates two lines, one with length 0 and one with length 3. Those two lines should not be equal. This test was choosen to check if length is tested, which should be that case and is faster then checking every point in one line.
-    \item line should not be equal with null
+    \item line should not be equal with null \\
     To check if equals can cope with null as an input without throwing a NullPointerException, this test calls equals on a line with length 0 and compares it to null.
     \item lines with points (A,A,B) and (B,B,A) should not be equal \\
     The idea for this test came when debugging the line class. The choosen implementation did not work correctly in cases where lines l1 ((0,0),(0,0),(1,1)) and l2 ((0,0),(1,1),(1,1)) were compared. Even though this lines should not be equal, the equals method returned true and assumed they were equal. To check that this misbehaviour was fixed and stays fixed during further development this testcase was implemented.
@@ -66,10 +66,72 @@ As the exercise states, hashCode must be implemented in a suitable manner. Accor
 
 To check these specifications three tests were written.
 \begin{enumerate}
-    \item two lines with same order have same hashCode \\
+    \item \textbf{two lines with same order have same hashCode} \\
     This test check if two lines with the same points in the same order have the same hashCode. As stated in the exercise such lines should be considered equal and should produce the same hashCode (see definitions from Java Api).
-    \item two lines with same order have same hashCode \\
+    \item \textbf{two lines with same order have same hashCode} \\
     Lines with only the order scrambled should be considered equal. This behaviour is validated with tests in \ref{sec:line_equals}. According to the Java API documentation such lines should return the same hashCode. This test is pretty similar to the test before, but validates that hashCode does work with different ordered lines.
+<<<<<<< HEAD
     \item hashCode stays same during one execution of programm
     As stated in the Java API: " Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer". This means as long as the JVM stays the same and the object is not manipulated on a field that is used to evaluate equality of this object it \textbf{must} produce the same hashCode. This is tested by calling hashCode twice on the same line object and validating that the result stays the same. This also checks if the hashCode is calculated with no degree of randomness that is based on, for example, a timestamp.
+=======
+    \item \textbf{hashCode stays same during one execution of programm} \\
+    As stated in the Java API: " Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer". This means as long as the JVM stays the same and the object is not manipulated on a field that is used to evaluate equality of this object it \textbf{must} produce the same hashCode. This is tested by calling hashCode twice on the same line object and validating that the result stays the same. This also checks if the hashCode is calculated with no degree of randomness that is based on for example a timestamp.
+>>>>>>> d4e4d44e8473f5cf578439c9d30045112ed9d5d5
+\end{enumerate}
+
+\subsection{Line.toString()}
+Since the output format for a line was specified in the exercise, the toString method had to be overridden. To check the correct return value three testcases were considered, as there were three possible outputs.
+\begin{enumerate}
+    \item \textbf{testToStringEmptyLine} \\
+    The first output is for empty lines. This was not defined in the exercise, so it was assumed, that simple () should be returned. This was tested by creating a an empty line and asserting if toString would return (). This was the most sensible approach, since the toString method should returnm a list of all points, which are none for an empty line. 
+    \item \textbf{testToStringOnePoint} \\
+    The second testcase was to check, if a line with length = 1 gives the correct return value. This was done by creating an empty line and adding one point. The main purpose of this test was to check wether the seperators between each point is printed correctly. As there is only one point, there shouldn't be any seperators before or after the point. The output is assumed to be ((Point.x, Point.y)).
+    \item \textbf{testToStringWithThreePointsInLine} \\
+    This is the most common case. In this test multiple points are used to create the line. This shows the full output for a single line, with seperators between the points and no seperation for the last point. The corresponding output is build with String.format, since it is assumed that Point.toString() works as defined.
+\end{enumerate}
+
+\subsection{Line.isValid}
+Up until now, the line was just an Array of points, without linear regression. The following methods are all used to calculate the corresponding line represented by the given points. The first method checks if a line is valid, for this the following  definitions where used.
+
+\begin{itemize}
+    \item A line is invalid with less then or equal to one point.
+    \item A line is invalid if the slope can not be calculated.
+    \item A mline is invalid if the intercept can not be calculated.
+    \item A line is valid in all other cases
+\end{itemize}
+
+To test these definitions, three tests where used
+\begin{enumerate}
+    \item \textbf{testIsInvalidWhenZeroPointsAreStored} \\
+    As stated a line is invalid with less then one point, so it is tested if an empty line is invalid.
+    \item \textbf{testIsInvalidWhenSlopeOrInterceptCanNotBeCalculated} \\
+    This test validated wether a line is invalid if its slope or intercept can not be calculated. This is done by creating a line with three points, all of which are parallel to the y-axsis. Since neither the slope nor the intercept can be calculated in this case, one test validates both definitions. As this is true for all lines, this test validates the whole behaviour.
+    \item \textbf{testLineIsValid} \\
+    The last case tests if the line can be valid at all by initializing a line where one can calculate slope and intercept and that has more then 2 points (in this case three points with a slope of 1 and an intercept of 0).
+\end{enumerate}
+
+\subsection{Line.slope}
+The method slope is defined to calculate the slope of any valid line using linear regression. Also, if the slope could not be calculated the method shall throw an RegressionFailedException. This is tested with four tests.
+\begin{enumerate}
+    \item \textbf{testReturnsCorrectSlopeForLine} \\
+    In this case it is tested, if a correct calulation is done for three points that are all on a 45 degree angled line. (maybe instert figutre here / reference). The slope of this line is asserted to be 1.0
+    \item \textbf{testReturnsCorrectSlopeForSixPoints} \\
+    This test is used to check wetehr the calculation for slope is dependend on the points beeing in a straight line. In this case the points are one the x or y axis respectively and the slope was calculated with WolframAlpha\footnote{\url{https://www.wolframalpha.com/input/?i=linear((1,0),(3,0),(5,0),(0,1),(0,3),(0,5))}}
+    \item \textbf{testThrowsExceptionWhenSlopeNotCalculable} \\
+    This test validates if a RegressionFailedException is thrown, when the line is invalid or the calculation for slope fails for any kind of reason (f.e. division by 0). For this a Line is created where all points are parallel to the y axis. Its is not possible (at least with linear regression) to calculate the slope, so this should throw an RegressionFailedException. This is asserted with \lstinline[language=java]{assertThrows(RegressionFailedException.class, () => l1.slope()}, which can be used since the Unittests where implemented with JUnit 5.
+    \item \textbf{testAddPointsOtherSlope} \\
+    The last text is used to check the caching behaviour of slope. The result shall be stored after the first calculation and only changed ones the line is manipulated. For this a line is created the slope ist calculated and then points are added to the line. After that its asserted that the slope changed and is not return from the stored cache.
+\end{enumerate}
+
+\subsection{Line.intercept}
+The last method for the class Line is intercept, which calculates the y-axis intercept of a line. Like with slope, intercept can only be calculated with a valid line. To test if intercept handles the calculation correctly, four tests where written
+\begin{enumerate}
+    \item \textbf{testInterceptReturnsCorrectValue} \\
+    The first test is the most common one. It is expected that when creating a line the intercept is calculated correctly with linear regression. This is tested by creating a line l1 with ((0,1),(1,2)) and asserting that intercept returns 1.0.
+    \item \textbf{testInterceptReturnsCorrectValueForLargerLines} \\
+    As for slope a longer line was choosen where not all points are straight on the line. The intercept was calculated with WolframAlpha again. The biggest difference to most other testcases is that we assert within some Accuracy, which is needed as double opertations in Java are not 100\% accurate by the nature of the way they are handled.
+    \item \textbf{testInterceptThrowsExceptionWhenNotCalculable} \\
+    Like with slope intercept should throw a RegressionFailedException when the line is not valid or any other arithmetic problem happens. This is checked by creating a line parallel to the y-axis and asserting that intercept throws a RegressionFailedException. As in Slope this is done by \lstinline[language=java]{assertThrows(...)}.
+    \item \textbf{testInterceptWithNaNforValidLine} \\
+    The last test checks how well intercept and the class Line handles NaN as point values. Since multiple tests for Double.NaN was already tested in Point to not crash at any operation, this is done for intercept.
 \end{enumerate}
