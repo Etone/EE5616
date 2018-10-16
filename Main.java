@@ -1,4 +1,4 @@
-package SLF;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import uk.ac.brunel.ee.lineRead;
 import uk.ac.brunel.ee.UnreadException;
 import uk.ac.brunel.ee.RereadException;
 
-public class examplefReadBack {
+public class Main {
 
 	public static void main(String[] args) {
 		System.out.println("  #### Loading data ");
