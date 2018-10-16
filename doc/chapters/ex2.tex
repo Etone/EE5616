@@ -1,32 +1,32 @@
 \chapter{Exercise 2}
-In exercise 2 the task was to implement unittests for the class Line, which represents the linear regression of multiple points. In the following every test is looked at and some explanation is given on why this test was choosen. The full source code can be found at \ref{lst:linetest}.
+In exercise 2 the task was to implement unit tests for the class Line, which represents the linear regression of multiple points. In the following every test is looked at and some explanation is given on why this test was choosen. The full source code can be found at \ref{lst:linetest}.
 
 \section{Testcases and description}
 
 \subsection{Constructor}
-As defined in the exercise two contructors should be created, a default constructor that creates an empty line with no points and an parametrized one, that initializes the line with given Points. For this three Testcases where written.
+As defined in the exercise two contructors should be created, a default constructor that creates an empty line with no points and a parametrized one, that initializes the line with given points. For this three test cases were written.
 
 \begin{enumerate}
     \item empty line with default constructor \\
-    This test calls the default constructor and checks if an empty line is created by checking if the length of the created line is zero.
+    This test calls the default constructor and checks if an empty line is created by asserting the length equals zero.
     \item initialized line with points \\
-    This test calls the parametrized constructor with an array of three points and checks if the line is correctly initialized by checking if the length is three.
+    This test calls the parametrized constructor with an array of three points and checks if the line is correctly initialized by checking if line.lentgh() returns three.
     \item empty line with empty points array \\
     This test checks if the parametrized constructor creates an empty line if it is called with an empty array of points. This was done to validate that the internal structure can handle empty arrays and does not crash or throw exceptions.
 \end{enumerate}
 
 \subsection{Line.add}
-The add mehtod should add an given point to the line. To validate the functionality two cases where checked.
+The add method should add a given point to the line. To validate the functionality two cases were checked.
 
 \begin{enumerate}
     \item add additional point to line \\
     This test checks the most common use of add. It appends one point to an existing empty line and validates, if the point is added by checking if the length is incremented. 
     \item add null to line \\
-    This test validates an edgecase, where instead of a point the value null is given as a parameter. This should not crash or throw any NullPointerExceptions and just not add any points to the line. This was again validated by checking the length of the line after adding null.
+    This test validates an edge case, where instead of a point the value null is given as a parameter. This should not crash or throw any NullPointerExceptions and just not add any points to the line. This was again validated by checking the length of the line after adding null.
 \end{enumerate}
 
 \subsection{Line.length}
-The method length() should return the current length of the line as an integer. To validate this bahaviour two test was created.
+The method length() should return the current length of the line as an integer. To validate this behaviour two test was created.
 
 \begin{enumerate}
     \item length is created with correct length \\
@@ -41,35 +41,35 @@ To test the equals method seven different cases were looked at. This amount come
 
 \begin{enumerate}
     \item lines are not equal with different points \\
-    There are two behaviours for the equals method. Two lines, that do not have the same points should be considered as not equal, so equals should return false. For this two lines with different points where created and checked if equals retuns false as defined.
+    There are two behaviours for the equals method. Two lines, that do not have the same points should be considered as not equal, so Line.equals()should return false. For this two lines with different points were created and checked if equals returns false as defined.
     \item lines with same points in different orders \\
     As the exercise states, lines with the same points, independent of the order should be considered as equal to each other. To check this behaviour the test creates two lines, one with the points ((0,0),(0,1),(0,2)) and one with the points ((0,2),(0,0),(0,1)). These lines should be considered as equal to each other which was asserted.
     \item object equals itself \\
-    As one would assume, the equals method should return true when called with the same object. This was tested by creating a line and checking if it equals itself. The major reason for this test was checking if the comparrison may change something while evaluating the object. This should not happen and is checked by this test.
+    As one would assume, the equals method should return true when called with the same object. This was tested by creating a line and checking if it equals itself. The major reason for this test was checking if the comparison may change something while evaluating the object. This should not happen and is checked by this test.
     \item lines should not be equal when different with multiple points in line \\
-    This test is a bit more complicated. Two lines, that are the same length, but with different points should not be equal. Also, the equals algorithm should deal with points double in line and not confuse them as beeing equal. For this two lines where created, one with the points ((0,0),(0,0)) and one with the points ((0,0),(0,1)). These two lines should not be equal. Depending on the implementation, the fact that one point is twice in one line can break the algorithm. To validate that the used implementation is safe this tets was written.
+    This test is a bit more complicated. Two lines, that are the same length, but with different points should not be equal. Also, the equals algorithm should deal with points double in line and not confuse them as beeing equal. For this two lines where created, one with the points ((0,0),(0,0)) and one with the points ((0,0),(0,1)). These two lines should not be equal. Depending on the implementation, the fact that one point is twice in one line can break the algorithm. To validate that the used implementation is safe this test was written.
     \item lines with different length should not be equal \\
     This test generates two lines, one with length 0 and one with length 3. Those two lines should not be equal. This test was choosen to check if length is tested, which should be that case and is faster then checking every point in one line.
     \item line should not be equal with null
     To check if equals can cope with null as an input without throwing a NullPointerException, this test calls equals on a line with length 0 and compares it to null.
     \item lines with points (A,A,B) and (B,B,A) should not be equal \\
-    The idea for this test came when debugging the line class. The choosen implementation did not work correctly in cases where lines l1 ((0,0),(0,0),(1,1)) and l2 ((0,0),(1,1),(1,1)) where compared. Even though this lines should not be equal, the quals method returned true and assumed they where equal. To check that this misbehaviour was fixed and stays fixed during further development this testcase was implemented.
+    The idea for this test came when debugging the line class. The choosen implementation did not work correctly in cases where lines l1 ((0,0),(0,0),(1,1)) and l2 ((0,0),(1,1),(1,1)) were compared. Even though this lines should not be equal, the equals method returned true and assumed they were equal. To check that this misbehaviour was fixed and stays fixed during further development this testcase was implemented.
 \end{enumerate}
 
 \subsection{Line.hashCode}
-As the exercise states, hashCode must be implemented in a sutible manner. According the the API documentation for Object.hashCode this means that the following specifications must be fulfilled\footnote{\url{https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#hashCode()}}.
+As the exercise states, hashCode must be implemented in a suitable manner. According to the API documentation for Object.hashCode this means that the following specifications must be fulfilled\footnote{\url{https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#hashCode()}}.
 \begin{itemize}
     \item Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.
     \item If two objects are equal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce the same integer result.
     \item It is not required that if two objects are unequal according to the equals(obj) method, then calling the hashCode method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hash tables.
 \end{itemize}
 
-To check this specifications three tests were written.
+To check these specifications three tests were written.
 \begin{enumerate}
     \item two lines with same order have same hashCode \\
     This test check if two lines with the same points in the same order have the same hashCode. As stated in the exercise such lines should be considered equal and should produce the same hashCode (see definitions from Java Api).
     \item two lines with same order have same hashCode \\
     Lines with only the order scrambled should be considered equal. This behaviour is validated with tests in \ref{sec:line_equals}. According to the Java API documentation such lines should return the same hashCode. This test is pretty similar to the test before, but validates that hashCode does work with different ordered lines.
     \item hashCode stays same during one execution of programm
-    As stated in the Java API: " Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer". This means as long as the JVM stays the same and the object is not manipulated on a field that is used to evaluate equality of this object it \textbf{must} produce the same hashCode. This is tested by calling hashCode twice on the same line object and validating that the result stays the same. This also checks if the hashCode is calculated with no degree of randomness that is based on for example a timestamp.
+    As stated in the Java API: " Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer". This means as long as the JVM stays the same and the object is not manipulated on a field that is used to evaluate equality of this object it \textbf{must} produce the same hashCode. This is tested by calling hashCode twice on the same line object and validating that the result stays the same. This also checks if the hashCode is calculated with no degree of randomness that is based on, for example, a timestamp.
 \end{enumerate}
