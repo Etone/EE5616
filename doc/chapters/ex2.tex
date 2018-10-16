@@ -40,7 +40,7 @@ The method length() should return the current length of the line as an integer. 
 To test the equals method seven different cases were looked at. This amount comes from the different specifications, which were written in the exercise.
 
 \begin{enumerate}
-    \item lines are not equal with different points \\
+    \item \textbf{testLinesNotEqualWithDifferentPoints} \\
     There are two behaviours for the equals method. Two lines, that do not have the same points should be considered as not equal, so equals should return false. For this two lines with different points where created and checked if equals retuns false as defined.
     \item lines with same points in different orders \\
     As the exercise states, lines with the same points, independent of the order should be considered as equal to each other. To check this behaviour the test creates two lines, one with the points ((0,0),(0,1),(0,2)) and one with the points ((0,2),(0,0),(0,1)). These lines should be considered as equal to each other which was asserted.
@@ -66,11 +66,11 @@ As the exercise states, hashCode must be implemented in a sutible manner. Accord
 
 To check this specifications three tests were written.
 \begin{enumerate}
-    \item \textbf{two lines with same order have same hashCode} \\
+    \item \textbf{testTwoLinesHaveSameHashCodeSameOrder} \\
     This test check if two lines with the same points in the same order have the same hashCode. As stated in the exercise such lines should be considered equal and should produce the same hashCode (see definitions from Java Api).
-    \item \textbf{two lines with same order have same hashCode} \\
+    \item \textbf{testTwoLinesHaveSameHashCodeDifferentOrder} \\
     Lines with only the order scrambled should be considered equal. This behaviour is validated with tests in \ref{sec:line_equals}. According to the Java API documentation such lines should return the same hashCode. This test is pretty similar to the test before, but validates that hashCode does work with different ordered lines.
-    \item \textbf{hashCode stays same during one execution of programm} \\
+    \item \textbf{testHashCodeStaysSameForMultipleCalls} \\
     As stated in the Java API: " Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer". This means as long as the JVM stays the same and the object is not manipulated on a field that is used to evaluate equality of this object it \textbf{must} produce the same hashCode. This is tested by calling hashCode twice on the same line object and validating that the result stays the same. This also checks if the hashCode is calculated with no degree of randomness that is based on for example a timestamp.
 \end{enumerate}
 
