@@ -7,6 +7,10 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import ee5616_2018.Line.RegressionFailedException;
+import ex3.DurationTimer;
+import ex3.LineClassStatistic;
+import ex3.LineStatistics;
+import ex3.Tuple;
 import uk.ac.brunel.ee.RereadException;
 import uk.ac.brunel.ee.UnreadException;
 import uk.ac.brunel.ee.lineRead;
@@ -31,12 +35,15 @@ public class AnalysisRunner {
 		
 		long startExecution = System.currentTimeMillis();
 		startRead = System.currentTimeMillis();
-		readLineFromFile(DATA_LONG);
-    stopRead = System.currentTimeMillis();
+		readLineFromFile(DATA_SHORT);
+		stopRead = System.currentTimeMillis();
 		
 		//Uncached slope and intercept calc
 		measureSlopeAndIntercept();
 		
+		
+		//Initialize lines in LineStatistics by reference
+		LineStatistics.initLines(lines);
 		LineStatistics.calcMetrics();
 		mapClass2TimeStatistics.forEach((lineClass, lineClassStatistics) -> lineClassStatistics.calcAvgs());
 		
@@ -132,7 +139,6 @@ public class AnalysisRunner {
 	private static void readLineFromFile(String path) throws UnreadException, RereadException {
 		lineRead reader = new lineRead(path);
 		
-		
 		List<Long> bufferGetXDurations = new ArrayList<>();
 		List<Long> bufferGetYDurations = new ArrayList<>();
 
@@ -178,7 +184,6 @@ public class AnalysisRunner {
 		}
 	}
 	
-
 	private static void storeTimeMeasurementReadLine(int length, long durationReadLine) {
 		//dont have to check if key is there as it is checked when storing getX and getY which is called first
 		//Normally not smart, but for this it will do
@@ -199,177 +204,5 @@ public class AnalysisRunner {
 			mapClass2TimeStatistics.put(lineClass, lcs);
 		}
 		
-	}
-
-	
-	public static class DurationTimer {
-		private static long startCall;
-		private static long stopCall;
-		
-
-		public static<T> Tuple<T, Long> measureDurationForCallInNs(Supplier<T> func) {
-			//Measure time in nanoseconds (stamp before and after call)
-			startCall = System.nanoTime();
-			T result = func.get();
-			stopCall = System.nanoTime();
-			
-			long duration =  stopCall-startCall;
-			
-			return new Tuple<T, Long>(result, duration);
-		}
-		
-		public static <T> Tuple<T, Long> measureDurationForCallInMs(Supplier<T> func) {
-			//Measure time in nanoseconds (stamp before and after call)
-			startCall = System.currentTimeMillis();
-			T result = func.get();
-			stopCall = System.currentTimeMillis();
-			
-			long duration =  stopCall-startCall;
-			
-			return new Tuple<>(result, duration);
-		}
-	}
-	
-	/**
-	 * Tuple Class for result from time measured method
-	 */
-	public static class Tuple<R,D> {
-		private R result;
-		private D duration;
-		
-		public Tuple(R result, D duration) {
-
-			this.result = result;
-			this.duration = duration;
-		}
-		
-		public D getDuration() {
-			return duration;
-		}
-		
-		public R getResult() {
-			return result;
-		}
-		
-		public void setDuration(D duration) {
-			this.duration = duration;
-		}
-		
-		public void setResult(R result) {
-
-			this.result = result;
-		}
-	}
-	
-	/**
-	 * Class that holds all data for a single LineClass (f.e. 3 point long lines)
-	 * @author csa
-	 *
-	 */
-	public static class LineClassStatistic {
-		//keep everything double for easier avg calculations and unified interfaces
-		List<Long> timingsGetX = new ArrayList<>();
-		List<Long> timingsGetY = new ArrayList<>();
-		List<Long> timingsSlopeUnchached = new ArrayList<>();
-		List<Long> timingsInterceptUncached = new ArrayList<>();
-		List<Long> timingsLoadingLine = new ArrayList<>();
-		
-		double getXAvg = Double.NaN;
-		double getYAvg = Double.NaN;
-		double loadTimeLineAvg = Double.NaN;
-
-		
-		double slopeUnchachedAvg = Double.NaN;
-		double interceptUnchachedAvg = Double.NaN;
-		
-		public void calcAvgs() {
-			getXAvg = calcAvgFromList(timingsGetX);
-			getYAvg = calcAvgFromList(timingsGetY);
-			slopeUnchachedAvg = calcAvgFromList(timingsSlopeUnchached);
-			interceptUnchachedAvg = calcAvgFromList(timingsInterceptUncached);
-			loadTimeLineAvg = calcAvgFromList(timingsLoadingLine);
-		}
-		
-		private double calcAvgFromList(List<Long> list) {
-			return list.stream().mapToLong(a -> a).average().orElseGet(() -> Double.NaN);
-		}
-	}
-	
-	/**
-	 * Class that holds all data which can only be calculated from all lines
-	 * @author csa
-	 *
-	 */
-	public static class LineStatistics {
-		static int numberValidLines = 0;
-		static int numberInvalidLines = 0;
-		
-		static double numberPoints = 0.0;
-		static double avgNumberPointsPerLine = Double.NaN;
-		
-		static double totalSlope = 0.0;
-		static double avgSlope = Double.NaN;
-		static double stdDevSlope = Double.NaN;
-		static double varianceSlope = 0.0;
-		
-		static double totalIntercept = 0.0;
-		static double avgIntercept = Double.NaN;
-		static double stdDevIntercept = Double.NaN;
-		static double varianceIntercept = 0.0;
-		
-		public static void calcMetrics() throws RegressionFailedException {
-			//1. number of Valid Lines and Invalid Lines
-			//1a. count all points
-			//1b. For Valid Lines calc slope
-			calcNumberVaildInvalidLines();
-			//2. Avg Number of Points per Line
-			calcAvgNumberPointsPerLine();
-			//3. Avg for slope() and intercept()
-			calcAvgSlopeIntercept();
-			//5. calc Variance slope and intercept (avg needed for this)
-			calcVarianceSlopeIntercept();
-			//6. calc std-dev slope and intercept
-			calcStdDevSlopeIntercept();
-		}
-
-		private static void calcStdDevSlopeIntercept() {
-			stdDevIntercept = Math.sqrt(varianceIntercept);
-			stdDevSlope = Math.sqrt(varianceSlope);
-		}
-
-		private static void calcVarianceSlopeIntercept() throws RegressionFailedException {
-			for (Line line : lines) {
-				//if not valid, slope and intercept not calculable, skip this line
-				if (!line.isValid()) continue;
-				
-				//Variance = ((current - avg)^2) / count items
-				varianceIntercept += ((line.intercept() - avgIntercept) * (line.intercept() - avgIntercept))/ (double) numberValidLines;
-				varianceSlope += ((line.slope() - avgSlope) * (line.slope() - avgSlope))/ (double) numberValidLines;
-			}
-		}
-
-
-		private static void calcAvgSlopeIntercept() {
-			avgSlope = (double) totalSlope / (double) numberValidLines;
-			avgIntercept = (double) totalIntercept / (double) numberValidLines;
-		}
-
-		private static void calcAvgNumberPointsPerLine() {
-			//cast to double to get correct result, else it always would cut off floating points
-			avgNumberPointsPerLine = (double) numberPoints / (double) numberValidLines;
-		}
-
-		private static void calcNumberVaildInvalidLines() throws RegressionFailedException {
-			for (Line l : lines) {
-				if (l.isValid()) {
-					numberPoints += l.length();
-					numberValidLines++;
-					totalIntercept += l.intercept();
-					totalSlope += l.slope();
-				} else {
-					numberInvalidLines++;
-				}
-			}
-		}	
 	}
 }

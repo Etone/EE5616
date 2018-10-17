@@ -135,14 +135,6 @@ The last method for the class Line is intercept, which calculates the y-axis int
 
 The following screenshots show the results (see \ref{fig:test_results}) when running the test suite and the coverage (see \ref{fig:test_cov}) produced with the selected tests. As seen the coverage is not 100\%, which should be reached as best as possible. The problem comes form the implementation of intercept() (see \ref{fig:missing_cov}). The method internally calls slope() which, when it fails, will throw an RegressionFailedException, which will be thrown further up the call stack to the test. After the internal slope() call, the method calculates the y-axis intercept and checks, if the calculation was sucessful. This is done to handle values like Double.NaN correclty. Since slope() already checks this behaviour, the test can't reach this code and can't cover it. 
 
-\begin{figure}[h!]
-    \begin{center}
-        \includegraphics{img/missingcov.png}
-        \caption{Missing coverage in Line.intercept due to unreachable code}
-        \label{fig:missing_cov}
-    \end{center}
-\end{figure}
-
 \begin{figure}[p!]
     \begin{center}
         \includegraphics{img/testresults.png}
@@ -157,4 +149,12 @@ The following screenshots show the results (see \ref{fig:test_results}) when run
         \caption{Coverage produced by LineTest for class Line, not 100\% coverage}
         \label{fig:test_cov}
        \end{center}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \includegraphics{img/missingcov.png}
+        \caption{Missing coverage in Line.intercept due to unreachable code}
+        \label{fig:missing_cov}
+    \end{center}
 \end{figure}
