@@ -1,0 +1,84 @@
+//Seqeunce Read
+title=Reading line with lineReader
+obj=<<class>>\nAnalysisRunner~runner
+obj=lineReader: reader~reader CREATED_LATER
+obj=<<class>>\nDurationTimer~timer
+obj=Line:line~line CREATED_LATER
+obj=Point:point~point CREATED_LATER
+
+runner->runner + : readLineFromFile()
+
+tick=
+runner -> reader : create
+
+tick=
+combinedFragment=loop~outer
+    reader:[nextLine()]
+    reader -> line: create
+
+    combinedFragment=loop~inner
+    reader:[nextPoint()]
+    
+    tick=
+    runner -> timer: measureDurationForCallInMs()
+    timer -> reader: getX()
+    reader .> runner: X
+    runner -> timer: measureDurationForCallInMs()    
+    timer -> reader : getY()
+    reader .> runner: Y
+    
+    runner->point:create
+    point .> runner:Point p
+    runner->line: add(p)
+
+    --=inner
+--=outer
+
+
+//measure slope and intercept
+title=measure Slope and Intercept
+obj=<<class>>AnalysisRunner~runner
+obj=line:Line~line
+obj=mapClass2LineClassStatistics\n:Map<Integer, LineClassStatistics>~map
+obj=<<class>>\nDurationTimer~timer
+obj=lcs:LineClassStatistics~lcs
+
+combinedFragment=foreach~for
+runner:[Line in lines]
+runner -> line: length
+
+line .> runner: return length
+runner->map:get(length)
+
+map.>runner: return lcs
+
+runner -> timer : measureDurationForCallInNs()
+timer->line:slope()
+timer.>runner:returns timingSlopeAndResult
+runner -> timer : measureDurationForCallInNs()
+timer->line:intercept()
+timer.>runner:returns timingInterceptAndResult
+
+runner -> lcs : add(slope)
+runner -> lcs : add(intercept)
+--=for
+
+
+
+//Classes
+AnalysisRunner
+--
+*_- DATA_SHORT: String_*
+*_- DATA_LONG: String_*
+_- lines: List<Line>_
+_- startRead: long_
+_- stopRead: long_
+_- mapClass2TimeStatistics: Map<Integer, LineClassStatistic>_
+--
+_+ main(args: String[]): void throws RegressionFailedException, Unread Exception, RereadException_
+_- measureSlopeAndIntercept(): void_
+_- printFormatted(output: String): void_
+_- format(): String_
+_- readLineFromFile(path: String): void throws UnreadException, RereadException_
+_- storeTimeMeasurementReadLine(length: int, durationReadLine: long): void_
+_- storeTimeMeasurementGetXGetY(lineClass: int, bufferGetXDuration: List<Long>, bufferGetYDuration: List<Long>): void_
