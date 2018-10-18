@@ -162,7 +162,8 @@ class PointTest {
 	
 	@Test
 	void testToStringZero() {
-		assertEquals("( +0.0000E+00, +0.0000E+00 )", new Point().toString());
+		assertEquals("( +0.0000E+00, +0.0000E+00 )",
+				new Point().toString());
 	}
 	
 	@Test
@@ -243,12 +244,14 @@ class PointTest {
 	
 	@Test
 	void testRotatePos180Fail() {
-		assertThrows(AngleOutOfRangeException.class, () -> new Point(0, 0).rotate(180 + ACCURACY));
+		assertThrows(AngleOutOfRangeException.class,
+				()-> new Point(0, 0).rotate(180 + ACCURACY));
 	}
 	
 	@Test
 	void testRotateNeg180Fail() {
-		assertThrows(AngleOutOfRangeException.class, () -> new Point(0, 0).rotate(-180 - ACCURACY));
+		assertThrows(AngleOutOfRangeException.class,
+				() -> new Point(0, 0).rotate(-180 - ACCURACY));
 	}
 	
 	@Test
@@ -288,7 +291,12 @@ class PointTest {
 		double x_base = 3.141;
 		double y_base = 82.23;
 		Point p = new Point(x_base, y_base);
-		p.displace(new Point(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
+		p.displace(
+				new Point(
+					Double.POSITIVE_INFINITY,
+					Double.NEGATIVE_INFINITY
+				)
+		);
 		assertTrue(Double.isInfinite(p.getX()));
 		assertTrue(p.getX() > 0);
 		assertTrue(Double.isInfinite(p.getY()));

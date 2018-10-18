@@ -137,7 +137,8 @@ public class Line {
 		return result / (double)this.points.size();
 	}
 	
-	private void ensureEnoughPointsForRegressionCalculation() throws RegressionFailedException {
+	private void ensureEnoughPointsForRegressionCalculation()
+			throws RegressionFailedException {
 		if (this.points.size() < 2) {
 			throw new RegressionFailedException();
 		}
@@ -168,15 +169,18 @@ public class Line {
 		
 	}
 	
-	private double getX(Point p) throws RegressionFailedException {
+	private double getX(Point p) 
+			throws RegressionFailedException {
 		return getValue(p != null ? p.getX() : null);
 	}
 	
-	private double getY(Point p) throws RegressionFailedException {
+	private double getY(Point p) 
+			throws RegressionFailedException {
 		return getValue(p != null ? p.getY() : null);
 	}
 	
-	private double getValue(Double v) throws RegressionFailedException {
+	private double getValue(Double v) 
+			throws RegressionFailedException {
 		if (v == null || !Double.isFinite(v)) {
 			throw new RegressionFailedException();
 		}
