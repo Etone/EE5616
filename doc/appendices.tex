@@ -10,20 +10,90 @@
 \subsection{LineTest.java}
 \input{listings/linetest.tex}
 
+\newpage
+
 \subsection{Code for analysis}
 \label{sec:appendix_analysisrunner}
 
 \subsubsection{AnalysisRunner.java}
 \input{listings/analysisrunner.tex}
 
+\newpage
+
 \subsubsection{Tuple.java}
 \input{listings/tuple.tex}
+
+\newpage
 
 \subsection{DurationTimer.java}
 \input{listings/durationtimer.tex}
 
+\newpage
+
 \subsection{LineClassStatistics.java}
 \input{listings/lcs.tex}
 
+\newpage
+
 \subsection{LineStatistics.java}
 \input{listings/linestat.tex}
+
+\newpage
+
+\section{Raw data collected}
+\begin{verbatim}
+------------------------------------------------------------------
+                              TIMING                              
+------------------------------------------------------------------
+
+Time needed to read file: 503s 
+ 
+Timings per class (points  in line) (avg)
+___________________________________________
+
+            getX       getY       slope       intercept    Loadtimes
+  Class*    (ms)       (ms)        (ms)         (ms)      lines(ms)** 
+    1;  1.5459184;  1.6020408;  0.0085094;  0.0047119;      3.15; 
+    2;  1.5537500;  1.6000000;  0.0011742;  0.0006956;      6.31; 
+    3;  1.5440806;  1.5717884;  0.0012346;  0.0005630;      9.35; 
+    4;  1.5579019;  1.5619891;  0.0012083;  0.0005356;     12.48; 
+    5;  1.5593315;  1.5721448;  0.0021393;  0.0008533;     15.66; 
+    6;  1.5720507;  1.5696754;  0.0018745;  0.0007700;     18.85; 
+    7;  1.5798894;  1.5730556;  0.0022753;  0.0008581;     22.07; 
+    8;  1.5803571;  1.5859788;  0.0023656;  0.0009995;     25.33; 
+    9;  1.5638554;  1.5866131;  0.0025246;  0.0008673;     28.37; 
+   10;  1.4818898;  2.4884514;  0.0028532;  0.0008337;     39.71; 
+   11;  1.4700240;  2.4892086;  0.0032995;  0.0011080;     43.56; 
+   12;  1.4691667;  2.4854167;  0.0044326;  0.0014906;     47.47; 
+   13;  1.4665762;  2.4861461;  0.0030203;  0.0007844;     51.39; 
+   14;  1.4638313;  2.4725554;  0.0035678;  0.0012137;     55.12; 
+   15;  1.4585956;  2.4874899;  0.0046295;  0.0014613;     59.20; 
+   16;  1.4754902;  2.4852941;  0.0044011;  0.0019476;     63.52; 
+   17;  1.4759487;  2.4844125;  0.0043210;  0.0013800;     67.35; 
+   18;  1.4693732;  2.4854701;  0.0052550;  0.0014606;     71.20; 
+   19;  1.4691449;  2.4842351;  0.0069823;  0.0023223;     75.14; 
+   20;  1.4680707;  2.4889946;  0.0058923;  0.0017381;     79.15; 
+   21;  1.4606597;  2.4787575;  0.0064285;  0.0019345;     82.75; 
+   22;  1.4718615;  2.4881522;  0.0064151;  0.0021935;     87.12; 
+   23;  1.4730099;  2.4860323;  0.0062514;  0.0017643;     91.08; 
+   24;  1.4676245;  2.4872605;  0.0056327;  0.0014604;     94.95; 
+   25;  1.4677000;  2.4797000;  0.0055549;  0.0015799;     98.70; 
+
+ *  each class represents lines with n points 
+    (f.e. Class 2 means all lines with length=2)
+
+**  including time for measuring times for getX and getY
+
+------------------------------------------------------------------
+                              METRICS                             
+------------------------------------------------------------------
+Total number of lines: 10000 ( 9608 valid | 392 invalid ) 
+Average number of points (valid) line 13.57 
+Average slope:                  0.750046      
+standard deviation slope:       0.004738 
+Average intercept:             -1.920046  
+standard deviation intercept:   0.008197 
+
+Printing results took 28 miliseconds
+Execution took 503 seconds
+\end{verbatim}

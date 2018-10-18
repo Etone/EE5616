@@ -67,4 +67,25 @@ timer.>runner:returns timingInterceptAndResult
 
 runner -> lcs : add(slope)
 runner -> lcs : add(intercept)
---=for
+--
+
+
+//
+title=AnalysisRunner.main(String[] args)
+obj=<<class>>\nAnalysisRunner~runner EXECUTION
+
+combinedFragment=ref readline~
+--
+
+combinedFragment=ref measureSlopeAndIntercept~
+--
+
+combinedFragment=ref calcMetrics~
+--
+
+combinedFragment=ref LineClassStatistics.calcAvgs~
+--
+
+runner -> runner + : printFormatted(formatted: String) ; on=runner
+runner -> runner + : format() ; on=runner
+runner .> runner + : formatted output; off=runner
