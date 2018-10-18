@@ -169,8 +169,8 @@ class PointTest {
 	@Test
 	void testToStringNeg() {
 		assertEquals(
-				"( -1.0000E+03, +2.0000E+05 )",
-				new Point(-1000, 200000).toString()
+				"( -1.0000E-04, +2.0000E+05 )",
+				new Point(-0.0001, 200000).toString()
 		);
 	}
 	
