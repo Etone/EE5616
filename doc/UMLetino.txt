@@ -1,12 +1,13 @@
 //Seqeunce Read
 title=Reading line with lineReader
 obj=<<class>>\nAnalysisRunner~runner
-obj=lineReader: reader~reader CREATED_LATER
+obj=reader\n:lineRead~reader CREATED_LATER
 obj=<<class>>\nDurationTimer~timer
-obj=Line:line~line CREATED_LATER
-obj=Point:point~point CREATED_LATER
+obj=line\n:Line~line CREATED_LATER
+obj=point\n:Point~point CREATED_LATER
+obj=lines\n:List<Line>~lines
 
-runner->runner + : readLineFromFile()
+runner->runner + : readLineFromFile(); on=runner
 
 tick=
 runner -> reader : create
@@ -20,19 +21,24 @@ combinedFragment=loop~outer
     reader:[nextPoint()]
     
     tick=
-    runner -> timer: measureDurationForCallInMs()
-    timer -> reader: getX()
-    reader .> runner: X
-    runner -> timer: measureDurationForCallInMs()    
-    timer -> reader : getY()
-    reader .> runner: Y
+    runner -> timer: measureDurationForCallInMs() ;on=runner
+    timer -> reader: getX() ;on=reader
+    reader .> timer: X ;off=reader
+    timer .> runner : Tuple<X, duration GetX()> ; off=runner
     
-    runner->point:create
-    point .> runner:Point p
-    runner->line: add(p)
-
+    tick=
+    runner -> timer: measureDurationForCallInMs() ; on=runner 
+    timer -> reader : getY() ;on=reader
+    reader .> timer: Y ; off=reader
+    timer .> runner : Tuple<Y, duration GetY()> ; off=runner
+    
+    runner->point:create(X, Y)
+    runner->line: add(point)
     --=inner
+    runner -> lines : add(line) ; on=runner
 --=outer
+
+
 
 
 //measure slope and intercept
@@ -62,23 +68,3 @@ timer.>runner:returns timingInterceptAndResult
 runner -> lcs : add(slope)
 runner -> lcs : add(intercept)
 --=for
-
-
-
-//Classes
-AnalysisRunner
---
-*_- DATA_SHORT: String_*
-*_- DATA_LONG: String_*
-_- lines: List<Line>_
-_- startRead: long_
-_- stopRead: long_
-_- mapClass2TimeStatistics: Map<Integer, LineClassStatistic>_
---
-_+ main(args: String[]): void throws RegressionFailedException, Unread Exception, RereadException_
-_- measureSlopeAndIntercept(): void_
-_- printFormatted(output: String): void_
-_- format(): String_
-_- readLineFromFile(path: String): void throws UnreadException, RereadException_
-_- storeTimeMeasurementReadLine(length: int, durationReadLine: long): void_
-_- storeTimeMeasurementGetXGetY(lineClass: int, bufferGetXDuration: List<Long>, bufferGetYDuration: List<Long>): void_
