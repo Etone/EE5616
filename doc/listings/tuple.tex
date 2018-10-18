@@ -1,0 +1,32 @@
+\begin{lstlisting}[language=java,
+    label=lst:tuple,
+    caption=TupleClass which is used to return measured time and result of function call
+]
+package ex3;
+
+public class Tuple<R,D> {
+	private R result;
+	private D duration;
+	
+	public Tuple(R result, D duration) {
+		this.result = result;
+		this.duration = duration;
+	}
+	
+	public D getDuration() {
+		return duration;
+	}
+	
+	public R getResult() {
+		return result;
+	}
+	
+	public void setDuration(D duration) {
+		this.duration = duration;
+	}
+	
+	public void setResult(R result) {
+		this.result = result;
+	}
+}
+\end{lstlisting}
