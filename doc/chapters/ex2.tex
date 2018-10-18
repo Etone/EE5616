@@ -7,11 +7,11 @@ In exercise 2 the task was to implement unit tests for the class Line, which rep
 As defined in the exercise two contructors should be created, a default constructor that creates an empty line with no points and a parametrized one, that initializes the line with given points. For this three test cases were written.
 
 \begin{enumerate}
-    \item empty line with default constructor \\
+    \item \textbf{testEmptyLineDefaultCtor} \\
     This test calls the default constructor and checks if an empty line is created by asserting the length equals zero.
-    \item initialized line with points \\
+    \item \textbf{testCtorWithPointArrayInitializesLineWithPoints} \\
     This test calls the parametrized constructor with an array of three points and checks if the line is correctly initialized by checking if line.lentgh() returns three.
-    \item empty line with empty points array \\
+    \item \textbf{testEmptyLineCtorWithEmptyArray} \\
     This test checks if the parametrized constructor creates an empty line if it is called with an empty array of points. This was done to validate that the internal structure can handle empty arrays and does not crash or throw exceptions.
 \end{enumerate}
 
@@ -19,9 +19,9 @@ As defined in the exercise two contructors should be created, a default construc
 The add method should add a given point to the line. To validate the functionality two cases were checked.
 
 \begin{enumerate}
-    \item add additional point to line \\
+    \item \textbf{testAddAdditionalPointToLine} \\
     This test checks the most common use of add. It appends one point to an existing empty line and validates, if the point is added by checking if the length is incremented. 
-    \item add null to line \\
+    \item \textbf{testAddNullToLineShouldNotAppend} \\
     This test validates an edge case, where instead of a point the value null is given as a parameter. This should not crash or throw any NullPointerExceptions and just not add any points to the line. This was again validated by checking the length of the line after adding null.
 \end{enumerate}
 
@@ -29,9 +29,9 @@ The add method should add a given point to the line. To validate the functionali
 The method length() should return the current length of the line as an integer. To validate this behaviour two test was created.
 
 \begin{enumerate}
-    \item length is created with correct length \\
+    \item \textbf{testLengthReturnsCorrectLengthNotEmpty} \\
     This test checks to basic functionality of length(). For this a line with three points is created, then the length method is called to check if it returns three.
-    \item length increments when adding points on runtime \\
+    \item \textbf{testLengthIncrementsWhenPointAdded} \\
     For this test an empty line is created and a single point is added. This should increment the length of the line by one. This was done to check if length is updated when a line is edited dynamically and is not set statically on creation.
 \end{enumerate}
 
@@ -40,19 +40,19 @@ The method length() should return the current length of the line as an integer. 
 To test the equals method seven different cases were looked at. This amount comes from the different specifications, which were written in the exercise.
 
 \begin{enumerate}
-    \item lines are not equal with different points \\
+    \item \textbf{testLinesNotEqualWithDifferentPoints} \\
     There are two behaviours for the equals method. Two lines, that do not have the same points should be considered as not equal, so Line.equals()should return false. For this two lines with different points were created and checked if equals returns false as defined.
     \item lines with same points in different orders \\
     As the exercise states, lines with the same points, independent of the order should be considered as equal to each other. To check this behaviour the test creates two lines, one with the points ((0,0),(0,1),(0,2)) and one with the points ((0,2),(0,0),(0,1)). These lines should be considered as equal to each other which was asserted.
-    \item object equals itself \\
+    \item \textbf{testObjectEqualsItself} \\
     As one would assume, the equals method should return true when called with the same object. This was tested by creating a line and checking if it equals itself. The major reason for this test was checking if the comparison may change something while evaluating the object. This should not happen and is checked by this test.
-    \item lines should not be equal when different with multiple points in line \\
+    \item \textbf{testEqualsSamePointTwiceInLine} \\
     This test is a bit more complicated. Two lines, that are the same length, but with different points should not be equal. Also, the equals algorithm should deal with points double in line and not confuse them as beeing equal. For this two lines where created, one with the points ((0,0),(0,0)) and one with the points ((0,0),(0,1)). These two lines should not be equal. Depending on the implementation, the fact that one point is twice in one line can break the algorithm. To validate that the used implementation is safe this test was written.
-    \item lines with different length should not be equal \\
-    This test generates two lines, one with length 0 and one with length 3. Those two lines should not be equal. This test was choosen to check if length is tested, which should be that case and is faster then checking every point in one line.
-    \item line should not be equal with null \\
+    \item \textbf{testLinesWithDifferentLenghtDontEqual} \\
+    This test generates two lines, one with length 0 and one with length 3. Those two lines should not be equal. This test was choosen to check if length is tested, which should be the case and is faster then checking every point in one line.
+    \item \textbf{testLineDoesNotEqualNull} \\
     To check if equals can cope with null as an input without throwing a NullPointerException, this test calls equals on a line with length 0 and compares it to null.
-    \item lines with points (A,A,B) and (B,B,A) should not be equal \\
+    \item \textbf{testLineAabNotEqualAbb} \\
     The idea for this test came when debugging the line class. The choosen implementation did not work correctly in cases where lines l1 ((0,0),(0,0),(1,1)) and l2 ((0,0),(1,1),(1,1)) were compared. Even though this lines should not be equal, the equals method returned true and assumed they were equal. To check that this misbehaviour was fixed and stays fixed during further development this testcase was implemented.
 \end{enumerate}
 
